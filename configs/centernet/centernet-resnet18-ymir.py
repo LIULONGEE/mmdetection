@@ -98,14 +98,13 @@ data = dict(
         dataset=dict(
             type=dataset_type,
             ann_file=root_dir+"train-index.tsv",
-            img_prefix=''),
-        pipeline=train_pipeline),
+            img_prefix='',
+            pipeline=train_pipeline)),
     val=dict(
-            dataset=dict(
               type=dataset_type,
               ann_file=root_dir+"val-index.tsv",
-              img_prefix='')
-            pipeline=test_pipeline),
+              img_prefix='',
+              pipeline=test_pipeline),
     test=dict(pipeline=test_pipeline))
 
 # optimizer
