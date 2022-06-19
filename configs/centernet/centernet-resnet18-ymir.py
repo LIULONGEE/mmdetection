@@ -114,6 +114,16 @@ data = dict(
 optimizer_config = dict(
     _delete_=True, grad_clip=dict(max_norm=35, norm_type=2))
 
+
+checkpoint_config = dict(interval=1)
+# yapf:disable
+log_config = dict(
+    interval=50,
+    hooks=[
+        dict(type='TextLoggerHook'),
+        dict(type='TensorboardLoggerHook')
+    ])
+
 # learning policy
 # Based on the default settings of modern detectors, we added warmup settings.
 lr_config = dict(
