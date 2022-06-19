@@ -4,6 +4,7 @@ import os.path as osp
 import shutil
 import subprocess
 import sys
+import yaml
 
 import cv2
 from easydict import EasyDict as edict
