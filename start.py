@@ -66,7 +66,7 @@ def _run_training(cfg: edict) -> None:
     # 1. convert dataset
     out_dir = cfg.ymir.output.root_dir
     logging.info(f'generate {out_dir}/data.yaml')
-    monitor.write_monitor_logger(percent=get_ymir_process(stage=YmirStage.PREPROCESS, p=1.0))
+    monitor.write_monitor_logger(percent=0.1)
 
     # 2. training model
     model_config = cfg.ymir.param.model_config
@@ -74,9 +74,6 @@ def _run_training(cfg: edict) -> None:
     
     command = f'CUDA_VISIBLE_DEVICES=0,1,2,3 ./tools/dist_train.sh {model_config} 4 --work-dir {models_dir}'
     logging.info(f'start training: {command}')
-
-    subprocess.run(command.split(), check=True)
-    monitor.write_monitor_logger(percent=get_ymir_process(stage=YmirStage.TASK, p=1.0))
 
     # if task done, write 100% percent log
     monitor.write_monitor_logger(percent=1.0)
