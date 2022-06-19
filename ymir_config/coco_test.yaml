@@ -1,1 +1,1 @@
-model_config: 
+model_config: configs/centernet/centernet-resnet18-ymir.py
