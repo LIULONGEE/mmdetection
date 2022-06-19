@@ -73,7 +73,7 @@ def _run_training(cfg: edict) -> None:
     models_dir = cfg.ymir.output.models_dir
     
     command = f'CUDA_VISIBLE_DEVICES=0,1,2,3' + \
-              f'./tools/dist_train.sh {model_config} 4' + \
+              f'bash tools/dist_train.sh {model_config} 4' + \
               f'--work-dir {models_dir}'
     logging.info(f'start training: {command}')
     subprocess.run(command.split(), check=True)
