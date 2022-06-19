@@ -64,7 +64,6 @@ def _run_training(cfg: edict) -> None:
     """
     # 1. convert dataset
     out_dir = cfg.ymir.output.root_dir
-    work_dirs = cfg.ymir.output.root_dir
     logging.info(f'generate {out_dir}/data.yaml')
     monitor.write_monitor_logger(percent=get_ymir_process(stage=YmirStage.PREPROCESS, p=1.0))
 
