@@ -74,6 +74,7 @@ def _run_training(cfg: edict) -> None:
     
     command = f'CUDA_VISIBLE_DEVICES=0,1,2,3 ./tools/dist_train.sh {model_config} 4 --work-dir {models_dir}'
     logging.info(f'start training: {command}')
+    subprocess.run(command.split(), check=True)
 
     # if task done, write 100% percent log
     monitor.write_monitor_logger(percent=1.0)
