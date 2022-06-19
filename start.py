@@ -11,7 +11,30 @@ from ymir_exc import dataset_reader as dr
 from ymir_exc import env, monitor
 from ymir_exc import result_writer as rw
 
-from utils.ymir_mmdetction import (YmirStage, Ymirmmdetection, convert_ymir_to_mmdetction, get_merged_config, get_ymir_process)
+def get_merged_config() -> edict:
+    """
+    merge ymir_config, cfg.param and code_config
+    code_config will be overwrited by cfg.param.
+    """
+    def get_code_config(code_config_file: str) -> dict:
+        if code_config_file is None:
+            return dict()
+        else:
+            with open(code_config_file, 'r') as f:
+                return yaml.safe_load(f)
+
+    exe_cfg = env.get_executor_config()
+    code_config_file = exe_cfg.get('code_config', None)
+    code_cfg = get_code_config(code_config_file)
+    code_cfg.update(exe_cfg)
+
+    merged_cfg = edict()
+    # the hyperparameter information
+    merged_cfg.param = code_cfg
+
+    # the ymir path information
+    merged_cfg.ymir = env.get_current_env()
+    return merged_cfg
 
 
 
@@ -46,10 +69,10 @@ def _run_training(cfg: edict) -> None:
     monitor.write_monitor_logger(percent=get_ymir_process(stage=YmirStage.PREPROCESS, p=1.0))
 
     # 2. training model
-    config_file = cfg.ymir.param.code_config
+    model_config = cfg.ymir.param.model_config
     models_dir = cfg.ymir.output.models_dir
     
-    command = f'CUDA_VISIBLE_DEVICES=0,1,2,3 ./tools/dist_train.sh {config_file} 4 --work-dirs {models_dir}'
+    command = f'CUDA_VISIBLE_DEVICES=0,1,2,3 ./tools/dist_train.sh {model_config} 4 --work-dirs {models_dir}'
     logging.info(f'start training: {command}')
 
     subprocess.run(command.split(), check=True)
@@ -60,42 +83,11 @@ def _run_training(cfg: edict) -> None:
 
 
 def _run_mining(cfg: edict()) -> None:
-    # generate data.yaml for mining
-    out_dir = cfg.ymir.output.root_dir
-    convert_ymir_to_yolov5(cfg)
-    logging.info(f'generate {out_dir}/data.yaml')
-    monitor.write_monitor_logger(percent=get_ymir_process(stage=YmirStage.PREPROCESS, p=1.0))
-
-    command = 'python3 mining/mining_cald.py'
-    logging.info(f'mining: {command}')
-    subprocess.run(command.split(), check=True)
-    monitor.write_monitor_logger(percent=1.0)
+    pass
 
 
 def _run_infer(cfg: edict) -> None:
-    # generate data.yaml for infer
-    out_dir = cfg.ymir.output.root_dir
-    logging.info(f'generate {out_dir}/data.yaml')
-    monitor.write_monitor_logger(percent=get_ymir_process(stage=YmirStage.PREPROCESS, p=1.0))
-
-    N = dr.items_count(env.DatasetType.CANDIDATE)
-    infer_result = dict()
-    model = YmirYolov5(cfg)
-    idx = -1
-
-    monitor_gap = max(1, N // 100)
-    for asset_path, _ in dr.item_paths(dataset_type=env.DatasetType.CANDIDATE):
-        img = cv2.imread(asset_path)
-        result = model.infer(img)
-        infer_result[asset_path] = result
-        idx += 1
-
-        if idx % monitor_gap == 0:
-            percent = get_ymir_process(stage=YmirStage.TASK, p=idx / N)
-            monitor.write_monitor_logger(percent=percent)
-
-    rw.write_infer_result(infer_result=infer_result)
-    monitor.write_monitor_logger(percent=1.0)
+    pass
 
 
 if __name__ == '__main__':
