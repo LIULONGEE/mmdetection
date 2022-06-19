@@ -72,7 +72,7 @@ def _run_training(cfg: edict) -> None:
     model_config = cfg.param.model_config
     models_dir = cfg.ymir.output.models_dir
     
-    command = f'bash tools/dist_train.sh {model_config} 4 ' + \
+    command = f'bash tools/dist_train.sh {model_config} 1 ' + \
               f'--work-dir {models_dir}'
     logging.info(f'start training: {command}')
     subprocess.run(command.split(), check=True)
