@@ -69,7 +69,7 @@ def _run_training(cfg: edict) -> None:
     monitor.write_monitor_logger(percent=0.1)
 
     # 2. training model
-    model_config = cfg.ymir.param.model_config
+    model_config = cfg.param.model_config
     models_dir = cfg.ymir.output.models_dir
     
     command = f'CUDA_VISIBLE_DEVICES=0,1,2,3 ./tools/dist_train.sh {model_config} 4 --work-dir {models_dir}'
