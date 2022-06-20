@@ -4,8 +4,7 @@
 from collections import OrderedDict
 import os.path as osp
 
-# from PIL import Image
-import imagesize
+from PIL import Image
 
 import json
 from .builder import DATASETS
@@ -57,9 +56,8 @@ class YmirDataset(CocoDataset):
             img_path, ann_path = line.strip().split()
             img_path = osp.join(self.data_root, self.img_prefix, img_path)
             ann_path = osp.join(self.data_root, self.ann_prefix, ann_path)
-            # img = Image.open(img_path)
-            # width, height = img.size
-            width, height = imagesize.get(img_path)
+            img = Image.open(img_path)
+            width, height = img.size
             images.append(
                 dict(id=image_counter,
                      file_name=img_path,
